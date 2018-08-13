@@ -6,6 +6,6 @@ public class LogInCommand implements Command {
     @Override
     public String execute(HttpServletRequest request) {
 
-        return null;
+        return "index.jsp";
     }
 }

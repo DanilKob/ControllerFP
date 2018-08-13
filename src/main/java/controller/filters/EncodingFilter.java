@@ -14,6 +14,8 @@ public class EncodingFilter implements Filter {
             servletResponse.setContentType(EncodingConstants.CONTEX_TYPE_TEXT_HTML);
             servletRequest.setCharacterEncoding(EncodingConstants.REGUEST_ENCODING_UTF8);
             servletResponse.setCharacterEncoding(EncodingConstants.RESPONSE_ENCODING_UTF8);
+            // todo replace sout
+            System.out.println("Encoding filter");
             filterChain.doFilter(servletRequest,servletResponse);
     }
 

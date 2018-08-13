@@ -24,7 +24,9 @@ public class Servlet extends HttpServlet {
         String commandName = req.getParameter(Parameters.ACTION_PARAM);
         //Command command = CommandManager.getInstance().getCommand(commandName);
         Command command = CommandManager.getInstance().getCommand(req);
+        System.out.println("Command = "+command.getClass().getName());
         String page = command.execute(req);
+        System.out.println("page = "+page);
 
         // todo Ask about method "isRedirected"
 
