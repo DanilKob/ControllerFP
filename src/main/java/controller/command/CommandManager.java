@@ -31,13 +31,13 @@ public class CommandManager {
     }
 
     private Command getDefaultCommand(){
-        return commandMap.get(CommandNames.DEFAULT);
+        return commandMap.get(CommandConstants.DEFAULT_COMMAND);
     }
 
     private void init(){
-        commandMap.put(CommandNames.LOGIN, new LogInCommand());
-        commandMap.put(CommandNames.LOGOUT,new LogOutCommand());
-        commandMap.put(CommandNames.REGISTRATION,new RegistrationCommand());
-        commandMap.put(CommandNames.DEFAULT,new DefaultCommand());
+        commandMap.put(CommandConstants.LOGIN_COMMAND, new LogInCommand());
+        commandMap.put(CommandConstants.LOGOUT_COMMAND,new LogOutCommand());
+        commandMap.put(CommandConstants.REGISTRATION_COMMAND,new RegistrationCommand());
+        commandMap.put(CommandConstants.DEFAULT_COMMAND,new DefaultCommand());
     }
 }
