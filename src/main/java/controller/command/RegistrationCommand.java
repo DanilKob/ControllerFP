@@ -2,8 +2,9 @@ package controller.command;
 
 import controller.PagesName;
 import controller.Parameters;
-import controller.utility.InputAnalyse;
+import controller.utility.IOHandler;
 import controller.utility.Languages;
+import controller.utility.RegexKeys;
 import controller.utility.RolesUtility;
 import model.UserService;
 import model.entity.RegistrationForm;
@@ -14,9 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 
 public class RegistrationCommand implements Command{
 
-    UserService userService = new UserService();
-    InputAnalyse inputAnalyse = new InputAnalyse();
-    RolesUtility rolesUtility = new RolesUtility();
+    UserService UserService = new UserService();
+    //IOHandler IOHandler = new IOHandler();
+    RolesUtility RolesUtility = new RolesUtility();
 
     @Override
     public String execute(HttpServletRequest request) {
@@ -25,59 +26,42 @@ public class RegistrationCommand implements Command{
         System.out.println(Parameters.LANGUAGE+ " " + request.getSession().getAttribute(Parameters.LANGUAGE));
 
         //todo ask about cast to String
-        String language = ((String)request.getSession().getAttribute(Parameters.LANGUAGE)).toUpperCase();
-        Languages languageEnum = Languages.valueOf(language);
+        // todo IllegalArgumentException
+        Languages language = IOHandler.getLanguageFromRequest(request);
 
         String firstName = request.getParameter(Parameters.FIRST_NAME);
         String lastName = request.getParameter(Parameters.LAST_NAME);
         String middleName = request.getParameter(Parameters.MIDDLE_NAME);
         String login = request.getParameter(Parameters.LOGIN);
 
-        boolean isFirstNameCorrect = true;
-        boolean isLastNameCorrect = true;
-        boolean isMiddleNameCorrect = true;
-        boolean isLoginCorrect = true;
-        // todo debug mode
-        /*
-        boolean isFirstNameCorrect = inputAnalyse.checkInputByRegex(firstName,RegexKeys.FIRST_NAME_REGEX,languageEnum);
-        boolean isLastNameCorrect = inputAnalyse.checkInputByRegex(lastName,RegexKeys.LAST_NAME_REGEX,languageEnum);
-        boolean isMiddleNameCorrect = inputAnalyse.checkInputByRegex(middleName,RegexKeys.MIDDLE_NAME_REGEX,languageEnum);
-        boolean isLoginCorrect = inputAnalyse.checkInputByRegex(login,RegexKeys.LOGIN_REGEX,languageEnum);
-        */
-        if(isFirstNameCorrect && isLastNameCorrect && isMiddleNameCorrect && isLoginCorrect){
+        boolean isFirstNameCorrect = IOHandler.checkInputByRegex(firstName,RegexKeys.FIRST_NAME_REGEX,language);
+        boolean isLastNameCorrect = IOHandler.checkInputByRegex(lastName,RegexKeys.LAST_NAME_REGEX,language);
+        boolean isMiddleNameCorrect = IOHandler.checkInputByRegex(middleName,RegexKeys.MIDDLE_NAME_REGEX,language);
+        boolean isLoginCorrect = IOHandler.checkInputByRegex(login,RegexKeys.LOGIN_REGEX,language);
 
-            RegistrationForm registrationForm = new RegistrationForm(firstName,lastName,middleName,language,login);
-            try {
-                userService.registerUser(registrationForm);
-                rolesUtility.setUserRoleAndLogin(request,User.ROLE.USER,login);
-                return CommandConstants.REDIRECT+PagesName.USER_HOME_PAGE;
-            } catch (LoginIsAlreadyExistException e) {
-                //todo refactor in separate method
-                //set message
-                return CommandConstants.REGISTRATION_COMMAND;
-            }
-        }else{
-            return CommandConstants.REGISTRATION_COMMAND;
+
+        if(isInputUncorrect(isFirstNameCorrect,isLastNameCorrect,isMiddleNameCorrect,isLastNameCorrect)){
+            IOHandler.setRegistrationErrorMassageToReguest(request,isFirstNameCorrect,isLastNameCorrect,
+                    isMiddleNameCorrect,isLoginCorrect,language);
+            return PagesName.REGISTRATION;
         }
-        // todo return can be replace from catch. Catch block will only contains "setMessage" method
+
+        RegistrationForm registrationForm = new RegistrationForm(firstName,lastName,middleName,login,language);
+        try {
+            UserService.registerUser(registrationForm);
+            RolesUtility.addRoleAndLoginInSession(request,User.ROLE.USER,login);
+            return CommandConstants.REDIRECT+PagesName.USER_HOME_PAGE;
+        } catch (LoginIsAlreadyExistException e) {
+            IOHandler.setLoginAlreadyExistMessageToRequest(request,language);
+            return PagesName.REGISTRATION;
+        }
 
     }
 
-    /*
-    private boolean checkInputAndSetErrorMassage(String firstName, String lastName, String middleName,
-                                                 String login,Languages language){
-        boolean isInputCorrect = true;
-        inputAnalyse.checkInputByRegex(firstName,RegexKeys.FIRST_NAME_REGEX,language);
-        inputAnalyse.checkInputByRegex(lastName,RegexKeys.LAST_NAME_REGEX,language);
-        inputAnalyse.checkInputByRegex(middleName,RegexKeys.MIDDLE_NAME_REGEX,language);
-        inputAnalyse.checkInputByRegex(login,RegexKeys.LOGIN_REGEX,language);
+    private boolean isInputUncorrect(boolean isFirstNameCorrect, boolean isLastNameCorrect,
+                                     boolean isMiddleNameCorrect, boolean isLoginCorrect){
+        // todo debug mode. Must be uncommented
+        //return !isFirstNameCorrect||!isLastNameCorrect||isMiddleNameCorrect||isLoginCorrect;
+        return false;
     }
-    */
-
-     /*
-        inputAnalyse.checkInputByRegex(firstName,RegexKeys.FIRST_NAME_REGEX,languageEnum);
-        inputAnalyse.checkInputByRegex(lastName,RegexKeys.LAST_NAME_REGEX,languageEnum);
-        inputAnalyse.checkInputByRegex(middleName,RegexKeys.MIDDLE_NAME_REGEX,languageEnum);
-        inputAnalyse.checkInputByRegex(login,RegexKeys.LOGIN_REGEX,languageEnum);
-        */
 }

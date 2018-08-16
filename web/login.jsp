@@ -2,7 +2,7 @@
   Created by IntelliJ IDEA.
   User: Danila
   Date: 13.08.2018
-  Time: 10:03
+  Time: 15:10
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page pageEncoding="UTF-8" %>
@@ -15,10 +15,10 @@
 <fmt:setBundle basename="text" />
 <html  lang="${language}">
 <head>
-    <title> Index </title>
+    <title> Login </title>
 </head>
 <body>
-<form action="registration.jsp">
+<form action="login.jsp">
     <select id="language" name="language" onchange="submit()">
         <option value="eng" ${language == 'eng' ? 'selected' : ''}>English</option>
         <option value="rus" ${language == 'rus' ? 'selected' : ''}>Russian</option>
@@ -26,20 +26,16 @@
 </form>
 <br>
 <form action="${pageContext.request.contextPath}/servlet" method="post">
-       <p>${pageContext.request.requestURL}</p>
+    <p>${pageContext.request.requestURL}</p>
 
-    <input type="hidden" name="command" value="register">
-    <input type="hidden" name="page" value="registration.jsp">
-    <p>Last name</p>
-    <p><input type="text" name="lastName" size="30%"/></p>
-    <p>First </p>
-    <p><input type="text" name="firstName" size="30%"/></p>
-    <p>Middle Name</p>
-    <p><input type="text" name="middleName" size="30%"/></p>
+    <input type="hidden" name="command" value="logIn">
+    <input type="hidden" name="page" value="login.jsp">
     <p>Login </p>
     <p><input type="text" name="login" size="30%"/></p>
-
-    <p><input type="submit" value="Register"/></p>
+    <p>Password </p>
+    <p><input type="text" name="password" size="30%"/></p>
+    <p><input type="submit" value="LogIn"/></p>
 </form>
+<a href="registration.jsp"> Register </a>
 </body>
 </html>

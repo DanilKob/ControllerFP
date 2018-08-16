@@ -5,6 +5,7 @@ public interface Parameters {
     String LANGUAGE = "language";
     String ROLE = "role";
     String LOGGED_USERS = "loggedUsers";
+    String ERROR_MESSAGE = "error";
 
     // Registration form
     // todo Fill fields
@@ -12,6 +13,13 @@ public interface Parameters {
     String FIRST_NAME = "firstName";
     String MIDDLE_NAME = "middleName";
     String LOGIN = "login";
+
+
+    String LAST_NAME_ERROR = "lastNameError";
+    String FIRST_NAME_ERROR = "firstNameError";
+    String MIDDLE_NAME_ERROR = "middleNameError";
+    String LOGIN_ERROR = "loginError";
+    String PASSWORD_ERROR = "passwordError";
     // Registration form
 
     // Login form

@@ -11,10 +11,12 @@ import java.util.Set;
  * Enumeration of available input languages
  */
 public enum Languages {
-    RUS(PropertyPath.RUS_REG),
-    ENG(PropertyPath.ENG_REG);
+    RUS(PropertyPath.RUS_TEXT,PropertyPath.RUS_REG),
+    ENG(PropertyPath.ENG_TEXT,PropertyPath.ENG_REG);
 
     private final Properties regexProperties;
+    private final Properties textProperties;
+    // todo delete useless set of avaliable languages
     private static Set<String> languageSet = new HashSet<>();
 
     static {
@@ -40,13 +42,24 @@ public enum Languages {
     public static boolean contains(String languageName) {
         return languageSet.contains(languageName);
     }
+    // todo delete useless set of avaliable languages
 
     /**
      * Load text and regex properties by given path
+     * @param textPath - path to property file with text messages
      * @param regexPath - path to property file with regexes
      */
-    Languages(String regexPath){
+    Languages(String textPath, String regexPath){
+        this.textProperties = loadProperty(textPath);
         this.regexProperties = loadProperty(regexPath);
+    }
+
+    /**
+     * Method return properties with text samples on current language
+     * @return Properies with text samples
+     */
+    public Properties getTextProperties(){
+        return textProperties;
     }
 
     /**

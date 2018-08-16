@@ -1,5 +1,6 @@
 package controller.utility;
 
+import controller.PagesName;
 import controller.Parameters;
 import model.entity.User;
 
@@ -9,8 +10,8 @@ import javax.servlet.http.HttpSession;
 import java.util.HashSet;
 
 public class RolesUtility {
-    public void setUserRoleAndLogin(HttpServletRequest request,
-                                    User.ROLE role, String login) {
+    public void addRoleAndLoginInSession(HttpServletRequest request,
+                                         User.ROLE role, String login) {
         HttpSession session = request.getSession();
         session.setAttribute(Parameters.ROLE, role);
         session.setAttribute(Parameters.LOGIN,login);
@@ -54,5 +55,17 @@ public class RolesUtility {
         return false;
     }
      */
+
+    public String defineHomePageByRole(User.ROLE role){
+        String page;
+        switch (role){
+            case ADMIN: page = PagesName.ADMIN_HOME_PAGE;
+                break;
+            case USER: page = PagesName.USER_HOME_PAGE;
+                break;
+            default: page = PagesName.LOGIN_PAGE;
+        }
+        return page;
+    }
 
 }

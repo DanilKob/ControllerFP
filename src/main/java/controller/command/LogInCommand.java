@@ -2,7 +2,9 @@ package controller.command;
 
 import controller.PagesName;
 import controller.Parameters;
-import controller.utility.InputAnalyse;
+import controller.utility.IOHandler;
+import controller.utility.Languages;
+import controller.utility.RegexKeys;
 import controller.utility.RolesUtility;
 import model.entity.User;
 import model.exception.LoginException;
@@ -13,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 public class LogInCommand implements Command {
     // todo best place to keep this class
     GuestService guestService = new GuestService();
-    InputAnalyse inputAnalyse = new InputAnalyse();
+    IOHandler IOHandler = new IOHandler();
     RolesUtility rolesUtility = new RolesUtility();
 
     @Override
@@ -22,38 +24,42 @@ public class LogInCommand implements Command {
         String login = request.getParameter(Parameters.LOGIN);
         String password = request.getParameter(Parameters.PASSWORD);
 
-        if(isInputDataUncorrect(login,password)){
+        // todo IllegalArgumentException
+        Languages language = IOHandler.getLanguageFromRequest(request);
+
+
+        boolean isLoginCorrect = IOHandler.checkInputByRegex(login,RegexKeys.LOGIN_REGEX,language);
+        boolean isPasswordCorrect = IOHandler.checkInputByRegex(login,RegexKeys.PASSWORD_REGEX,language);
+
+        if(isInputDataUncorrect(isLoginCorrect,isPasswordCorrect)){
+            IOHandler.setLoginErrorMessagesToRequest(request,isLoginCorrect,isPasswordCorrect,language);
             return PagesName.LOGIN_PAGE;
         }
+
         if(rolesUtility.isUserAlreadyLogged(request,login)){
-            // todo call log out command
             CommandManager.getInstance().getCommand(CommandConstants.LOGOUT_COMMAND).execute(request);
             return PagesName.LOGIN_PAGE;
         }
+
         try {
             User.ROLE role = guestService.login(new User(login,password));
-            // todo add in Session and Contex scope
             rolesUtility.addLoginInServletContext(request,login);
-            rolesUtility.setUserRoleAndLogin(request,role,login);
-            return CommandConstants.REDIRECT+defineHomePageByRole(role);
+            rolesUtility.addRoleAndLoginInSession(request,role,login);
+            // todo if statement has not already accepted, catch exception
+            return CommandConstants.REDIRECT+ getHomePageByRole(role);
         } catch (LoginException e) {
             return PagesName.LOGIN_PAGE;
         }
     }
 
-    private boolean isInputDataUncorrect(String login, String password){
-        if(login== null || password ==null || login.isEmpty() || password.isEmpty()){
-            return true;
-        }
-        // todo Should it be simplify?
-        /*
-        return !inputAnalyse.checkInputByRegex(login,RegexKeys.LOGIN_REGEX,Languages.ENG) ||
-                !inputAnalyse.checkInputByRegex(login,RegexKeys.PASSWORD_REGEX,Languages.ENG);
-         */
+    private boolean isInputDataUncorrect(boolean isLoginCorrect, boolean isPasswordCorrect){
+        // todo debug mode. Must be uncommented
+        //return !isLoginCorrect || !isPasswordCorrect;
         return false;
     }
 
-    private String defineHomePageByRole(User.ROLE role){
+
+    private String getHomePageByRole(User.ROLE role){
         String page;
         switch (role){
             case ADMIN: page = PagesName.ADMIN_HOME_PAGE;

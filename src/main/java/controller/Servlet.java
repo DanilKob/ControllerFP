@@ -30,8 +30,6 @@ public class Servlet extends HttpServlet {
     }
 
     private void processRequest(HttpServletRequest req,HttpServletResponse resp) throws ServletException,IOException{
-        String commandName = req.getParameter(Parameters.ACTION_PARAM);
-        //Command command = CommandManager.getInstance().getCommand(commandName);
         Command command = CommandManager.getInstance().getCommand(req);
         String page = command.execute(req);
 
