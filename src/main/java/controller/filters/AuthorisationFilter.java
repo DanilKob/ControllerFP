@@ -2,6 +2,7 @@ package controller.filters;
 
 import controller.PagesName;
 import controller.Parameters;
+import controller.utility.RolesUtility;
 import model.entity.User;
 
 import javax.servlet.*;
@@ -29,13 +30,13 @@ public class AuthorisationFilter implements Filter {
         System.out.println("====== AuthFilter======");
 
         System.out.println("path = "+path);
-
+        /*
         if(session.isNew()){
             // todo call model from filter!!!
             System.out.println("Session = "+session+" is new");
             session.setAttribute(Parameters.ROLE,User.ROLE.GUEST);
         }
-
+        */
         User.ROLE roleFromPath = defineRoleFromPath(path);
         User.ROLE roleFromSession = defineRoleFromSession(session);
 
@@ -43,21 +44,30 @@ public class AuthorisationFilter implements Filter {
         System.out.println("roleFromPath = "+roleFromPath);
         System.out.println("roleFromSession = "+roleFromSession);
 
-        System.out.println(roleFromPath.equals(roleFromSession));
-        System.out.println("===================");
-
-        if(checkAccess(roleFromPath,roleFromSession)){
+        if(roleFromPath.equals(roleFromSession)){
             filterChain.doFilter(servletRequest,servletResponse);
-        }else{
-            System.out.println("Filter redirect to error");
-            //httpServletResponse.sendRedirect(PagesName.ERROR);
-            // filter path
-            System.out.println("path = "+path);
-            String pathRedirect = removeRoleDirectoryFromPath(path,roleFromPath)+PagesName.ERROR;
-
-            System.out.println("redirect path = " + pathRedirect);
-            httpServletResponse.sendRedirect( pathRedirect);
+            return;
         }
+
+        if(roleFromPath.equals(User.ROLE.GUEST)){
+            RolesUtility.removeRoleAndLogin(httpServletRequest);
+            httpServletResponse.sendRedirect(PagesName.INDEX_PAGE);
+            return;
+        }
+
+        System.out.println("Filter redirect to error");
+        //httpServletResponse.sendRedirect(PagesName.ERROR);
+        // filter path
+        System.out.println("path = "+path);
+
+        RolesUtility.removeRoleAndLogin(httpServletRequest);
+        String pathRedirect = removeRoleDirectoryFromPath(path,roleFromPath)+PagesName.ERROR;
+
+        System.out.println("redirect path = " + pathRedirect);
+        httpServletResponse.sendRedirect( pathRedirect);
+
+
+        System.out.println("!===================!");
     }
 
     @Override
@@ -72,16 +82,25 @@ public class AuthorisationFilter implements Filter {
     }
     //todo refactor defineRoleFromSession
     private User.ROLE defineRoleFromSession(HttpSession session){
+        // todo maybe can be null
+        /*
         User.ROLE roleFromSession = (User.ROLE) session.getAttribute(Parameters.ROLE);
         return (roleFromSession==null)?User.ROLE.GUEST:roleFromSession;
+        */
+        return (User.ROLE) session.getAttribute(Parameters.ROLE);
     }
 
     private boolean checkAccess(String path,HttpSession session){
         User.ROLE roleFromPath = defineRoleFromPath(path);
         User.ROLE roleFromSession = defineRoleFromSession(session);
         //todo finish return statement and make correct responde path
-        return (roleFromPath.equals(User.ROLE.GUEST) || roleFromPath.equals(roleFromSession));
+        return roleFromPath.equals(roleFromSession);
     }
+
+    private boolean isRequestedPageForGuest(User.ROLE roleFromPath){
+        return roleFromPath.equals(User.ROLE.GUEST);
+    }
+
 
     private boolean checkAccess(User.ROLE roleFromPath,User.ROLE roleFromSession){
         return (roleFromPath.equals(User.ROLE.GUEST) || roleFromPath.equals(roleFromSession));
@@ -92,3 +111,26 @@ public class AuthorisationFilter implements Filter {
         return  path.replaceAll(target,"");
     }
 }
+
+        /*
+
+        System.out.println("Session = "+session);
+        System.out.println("roleFromPath = "+roleFromPath);
+        System.out.println("roleFromSession = "+roleFromSession);
+
+        System.out.println(roleFromPath.equals(roleFromSession));
+
+
+        if(checkAccess(roleFromPath,roleFromSession)){
+            filterChain.doFilter(servletRequest,servletResponse);
+        }else{
+            System.out.println("Filter redirect to error");
+            //httpServletResponse.sendRedirect(PagesName.ERROR);
+            // filter path
+            System.out.println("path = "+path);
+            String pathRedirect = removeRoleDirectoryFromPath(path,roleFromPath)+PagesName.ERROR;
+
+            System.out.println("redirect path = " + pathRedirect);
+            httpServletResponse.sendRedirect( pathRedirect);
+        }
+        */

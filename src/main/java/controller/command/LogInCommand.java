@@ -29,22 +29,28 @@ public class LogInCommand implements Command {
 
 
         boolean isLoginCorrect = IOHandler.checkInputByRegex(login,RegexKeys.LOGIN_REGEX,language);
-        boolean isPasswordCorrect = IOHandler.checkInputByRegex(login,RegexKeys.PASSWORD_REGEX,language);
+        boolean isPasswordCorrect = IOHandler.checkInputByRegex(password,RegexKeys.PASSWORD_REGEX,language);
+
+        System.out.println("isLoginCorrect = " + isLoginCorrect);
+        System.out.println("isPasswordCorrect =  " + isPasswordCorrect);
 
         if(isInputDataUncorrect(isLoginCorrect,isPasswordCorrect)){
             IOHandler.setLoginErrorMessagesToRequest(request,isLoginCorrect,isPasswordCorrect,language);
             return PagesName.LOGIN_PAGE;
         }
 
-        if(rolesUtility.isUserAlreadyLogged(request,login)){
-            CommandManager.getInstance().getCommand(CommandConstants.LOGOUT_COMMAND).execute(request);
+        // todo remove to filter
+        if(RolesUtility.isUserAlreadyLogged(request,login)){
+            // todo block postman
+            //CommandManager.getInstance().getCommand(CommandConstants.LOGOUT_COMMAND).execute(request);
             return PagesName.LOGIN_PAGE;
         }
 
         try {
+            // todo return object User. not just role
             User.ROLE role = guestService.login(new User(login,password));
-            rolesUtility.addLoginInServletContext(request,login);
-            rolesUtility.addRoleAndLoginInSession(request,role,login);
+            RolesUtility.addLoginInServletContext(request,login);
+            RolesUtility.addRoleAndLoginInSession(request,role,login);
             // todo if statement has not already accepted, catch exception
             return CommandConstants.REDIRECT+ getHomePageByRole(role);
         } catch (LoginException e) {
@@ -54,8 +60,7 @@ public class LogInCommand implements Command {
 
     private boolean isInputDataUncorrect(boolean isLoginCorrect, boolean isPasswordCorrect){
         // todo debug mode. Must be uncommented
-        //return !isLoginCorrect || !isPasswordCorrect;
-        return false;
+        return !isLoginCorrect || !isPasswordCorrect;
     }
 
 

@@ -10,7 +10,7 @@ public class LogOutCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest request) {
-        rolesUtility.removeRoleAndLogin(request);
+        RolesUtility.removeRoleAndLogin(request);
         return CommandConstants.REDIRECT + PagesName.INDEX_PAGE;
     }
 }

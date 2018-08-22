@@ -39,17 +39,23 @@ public class RegistrationCommand implements Command{
         boolean isMiddleNameCorrect = IOHandler.checkInputByRegex(middleName,RegexKeys.MIDDLE_NAME_REGEX,language);
         boolean isLoginCorrect = IOHandler.checkInputByRegex(login,RegexKeys.LOGIN_REGEX,language);
 
+        System.out.println("isFirstNameCorrect = " + isFirstNameCorrect);
+        System.out.println("isLastNameCorrect = " + isLastNameCorrect);
+        System.out.println("isMiddleNameCorrect = " + isMiddleNameCorrect);
+        System.out.println("isLoginCorrect = " + isLoginCorrect);
 
         if(isInputUncorrect(isFirstNameCorrect,isLastNameCorrect,isMiddleNameCorrect,isLastNameCorrect)){
+            System.out.println("Input is uncorrect");
             IOHandler.setRegistrationErrorMassageToReguest(request,isFirstNameCorrect,isLastNameCorrect,
                     isMiddleNameCorrect,isLoginCorrect,language);
             return PagesName.REGISTRATION;
         }
-
+        // todo change to User entity
         RegistrationForm registrationForm = new RegistrationForm(firstName,lastName,middleName,login,language);
         try {
             UserService.registerUser(registrationForm);
-            RolesUtility.addRoleAndLoginInSession(request,User.ROLE.USER,login);
+            controller.utility.RolesUtility.addRoleAndLoginInSession(request,User.ROLE.USER,login);
+            System.out.println("WAS REGISTERED");
             return CommandConstants.REDIRECT+PagesName.USER_HOME_PAGE;
         } catch (LoginIsAlreadyExistException e) {
             IOHandler.setLoginAlreadyExistMessageToRequest(request,language);
@@ -61,7 +67,7 @@ public class RegistrationCommand implements Command{
     private boolean isInputUncorrect(boolean isFirstNameCorrect, boolean isLastNameCorrect,
                                      boolean isMiddleNameCorrect, boolean isLoginCorrect){
         // todo debug mode. Must be uncommented
-        //return !isFirstNameCorrect||!isLastNameCorrect||isMiddleNameCorrect||isLoginCorrect;
-        return false;
+        return !isFirstNameCorrect||!isLastNameCorrect||!isMiddleNameCorrect||!isLoginCorrect;
+        //return false;
     }
 }

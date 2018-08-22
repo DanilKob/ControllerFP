@@ -23,7 +23,7 @@ public class SessionListener implements HttpSessionListener {
         String login = (String) httpSessionEvent.getSession().getAttribute(Parameters.LOGIN);
 
         loggedUsers.remove(login);
-        httpSessionEvent.getSession().getServletContext().setAttribute(Parameters.LOGGED_USERS, loggedUsers);
+        //httpSessionEvent.getSession().getServletContext().setAttribute(Parameters.LOGGED_USERS, loggedUsers);
         System.out.println("Session Destroyed");
     }
 }

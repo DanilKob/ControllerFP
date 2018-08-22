@@ -10,7 +10,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<c:set var="language" value="${not empty param.language ? param.language : not empty language ? language : pageContext.request.locale}" scope="session" />
+<c:set var="language" value="${not empty param.language ? param.language : not empty language ? language : 'eng'}" scope="session" />
 <fmt:setLocale value="${language}" />
 <fmt:setBundle basename="text" />
 <html  lang="${language}">
@@ -30,10 +30,19 @@
 
     <input type="hidden" name="command" value="logIn">
     <input type="hidden" name="page" value="login.jsp">
+
     <p>Login </p>
-    <p><input type="text" name="login" size="30%"/></p>
+    <c:if test="${not empty requestScope.loginError}">
+        <p><c:out value="${requestScope.loginError}"/></p>
+    </c:if>
+    <p><input type="text" name="login" value="${param.login}" size="30%"/></p>
+
     <p>Password </p>
-    <p><input type="text" name="password" size="30%"/></p>
+    <c:if test="${not empty requestScope.passwordError}">
+        <p><c:out value="${requestScope.passwordError}"/></p>
+    </c:if>
+    <p><input type="text" name="password" value="${param.password}" size="30%"/></p>
+
     <p><input type="submit" value="LogIn"/></p>
 </form>
 <a href="registration.jsp"> Register </a>
