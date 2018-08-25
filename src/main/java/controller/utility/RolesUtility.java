@@ -16,6 +16,7 @@ public class RolesUtility {
         // todo add User. NOT JUST LOGIN
         session.setAttribute(Parameters.LOGIN,login);
         // todo add first name to session scope
+        System.out.println("LOGIN HAS BEEN ADDED TO SESSION. LOGIN :: " + login);
     }
 
     public static boolean isUserAlreadyLogged(HttpServletRequest request, String login){
@@ -26,6 +27,7 @@ public class RolesUtility {
     public static void addLoginInServletContext(HttpServletRequest request, String login){
         HashSet<String> loggedUsers = (HashSet<String>) request.getServletContext().getAttribute(Parameters.LOGGED_USERS);
         loggedUsers.add(login);
+        System.out.println("LOGIN HAS BEEN ADDED TO CONTEXT. LOGIN :: " + login);
         //request.getServletContext().setAttribute(Parameters.LOGGED_USERS,loggedUsers);
     }
 

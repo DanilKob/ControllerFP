@@ -25,5 +25,11 @@
     </select>
 </form>
 <br>
+<form action="${pageContext.request.contextPath}/servlet" method="post">
+
+    <input type="hidden" name="command" value="logOut">
+
+    <p><input type="submit" value="<fmt:message key="logout"/>"/></p>
+</form>
 </body>
 </html>

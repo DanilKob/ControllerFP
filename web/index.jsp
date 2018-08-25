@@ -15,7 +15,7 @@
 <fmt:setBundle basename="text" />
 <html  lang="${language}">
 <head>
-  <title> Index </title>
+  <title> <fmt:message key="index.start.page"/> </title>
 </head>
 <body>
 <form action="index.jsp">
@@ -25,7 +25,7 @@
   </select>
 </form>
 <br>
-<a href="registration.jsp"> Register </a>
-<a href="login.jsp"> LogIn </a>
+<a href="registration.jsp"> <fmt:message key="index.registration"/> </a>
+<a href="login.jsp"> <fmt:message key="index.login"/></a>
 </body>
 </html>

@@ -33,28 +33,35 @@ public class RegistrationCommand implements Command{
         String lastName = request.getParameter(Parameters.LAST_NAME);
         String middleName = request.getParameter(Parameters.MIDDLE_NAME);
         String login = request.getParameter(Parameters.LOGIN);
+        String password = request.getParameter(Parameters.PASSWORD);
 
         boolean isFirstNameCorrect = IOHandler.checkInputByRegex(firstName,RegexKeys.FIRST_NAME_REGEX,language);
         boolean isLastNameCorrect = IOHandler.checkInputByRegex(lastName,RegexKeys.LAST_NAME_REGEX,language);
         boolean isMiddleNameCorrect = IOHandler.checkInputByRegex(middleName,RegexKeys.MIDDLE_NAME_REGEX,language);
         boolean isLoginCorrect = IOHandler.checkInputByRegex(login,RegexKeys.LOGIN_REGEX,language);
+        boolean isPasswordCorrect = IOHandler.checkInputByRegex(password,RegexKeys.PASSWORD_REGEX,language);
 
         System.out.println("isFirstNameCorrect = " + isFirstNameCorrect);
         System.out.println("isLastNameCorrect = " + isLastNameCorrect);
         System.out.println("isMiddleNameCorrect = " + isMiddleNameCorrect);
         System.out.println("isLoginCorrect = " + isLoginCorrect);
+        System.out.println("isPasswordCorrect = " + isPasswordCorrect);
 
-        if(isInputUncorrect(isFirstNameCorrect,isLastNameCorrect,isMiddleNameCorrect,isLastNameCorrect)){
+
+        if(isInputUncorrect(isFirstNameCorrect,isLastNameCorrect,isMiddleNameCorrect,isLoginCorrect,isPasswordCorrect)){
             System.out.println("Input is uncorrect");
             IOHandler.setRegistrationErrorMassageToReguest(request,isFirstNameCorrect,isLastNameCorrect,
-                    isMiddleNameCorrect,isLoginCorrect,language);
+                    isMiddleNameCorrect,isLoginCorrect,isPasswordCorrect,language);
             return PagesName.REGISTRATION;
         }
         // todo change to User entity
-        RegistrationForm registrationForm = new RegistrationForm(firstName,lastName,middleName,login,language);
+        RegistrationForm registrationForm = new RegistrationForm(firstName,lastName,middleName,login,password,language);
         try {
             UserService.registerUser(registrationForm);
-            controller.utility.RolesUtility.addRoleAndLoginInSession(request,User.ROLE.USER,login);
+
+            RolesUtility.addRoleAndLoginInSession(request,User.ROLE.USER,login);
+            RolesUtility.addLoginInServletContext(request,login);
+
             System.out.println("WAS REGISTERED");
             return CommandConstants.REDIRECT+PagesName.USER_HOME_PAGE;
         } catch (LoginIsAlreadyExistException e) {
@@ -65,9 +72,9 @@ public class RegistrationCommand implements Command{
     }
 
     private boolean isInputUncorrect(boolean isFirstNameCorrect, boolean isLastNameCorrect,
-                                     boolean isMiddleNameCorrect, boolean isLoginCorrect){
+                                     boolean isMiddleNameCorrect, boolean isLoginCorrect, boolean isPasswordCorrect){
         // todo debug mode. Must be uncommented
-        return !isFirstNameCorrect||!isLastNameCorrect||!isMiddleNameCorrect||!isLoginCorrect;
+        return !isFirstNameCorrect||!isLastNameCorrect||!isMiddleNameCorrect||!isLoginCorrect||!isPasswordCorrect;
         //return false;
     }
 }

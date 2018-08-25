@@ -15,7 +15,7 @@
 <fmt:setBundle basename="text" />
 <html  lang="${language}">
 <head>
-    <title> Login </title>
+    <title>  <fmt:message key="login.page"/>Login </title>
 </head>
 <body>
 <form action="login.jsp">
@@ -31,13 +31,13 @@
     <input type="hidden" name="command" value="logIn">
     <input type="hidden" name="page" value="login.jsp">
 
-    <p>Login </p>
+    <p> <fmt:message key="login.login"/> </p>
     <c:if test="${not empty requestScope.loginError}">
         <p><c:out value="${requestScope.loginError}"/></p>
     </c:if>
     <p><input type="text" name="login" value="${param.login}" size="30%"/></p>
 
-    <p>Password </p>
+    <p> <fmt:message key="login.password"/> </p>
     <c:if test="${not empty requestScope.passwordError}">
         <p><c:out value="${requestScope.passwordError}"/></p>
     </c:if>

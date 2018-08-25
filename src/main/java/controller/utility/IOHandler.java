@@ -13,8 +13,12 @@ public class IOHandler {
         return Languages.valueOf(language);
     }
 
+    public static boolean isInputEmty(String input){
+        return ((input == null) || (input.isEmpty()));
+    }
+
     public static boolean checkInputByRegex(String inputWord, String regexPropertyKey, Languages language){
-        if((inputWord == null) || (inputWord.isEmpty())) {
+        if(isInputEmty(inputWord)) {
             return false;
         }
         return inputWord.matches(language.getRegexProperties().getProperty(regexPropertyKey));
@@ -33,6 +37,7 @@ public class IOHandler {
     public static void setRegistrationErrorMassageToReguest(HttpServletRequest request,
                                                             boolean isFirstNameCorrect, boolean isLastNameCorrect,
                                                             boolean isMiddleNameCorrect, boolean isLoginCorrect,
+                                                            boolean isPasswordCorrect,
                                                             Languages language){
         if(!isFirstNameCorrect){
             request.setAttribute(Parameters.FIRST_NAME_ERROR,getTextByRegexAndLanguage(TextKeys.BAD_FIRST_NAME,language));
@@ -45,6 +50,9 @@ public class IOHandler {
         }
         if(!isLoginCorrect){
             request.setAttribute(Parameters.LOGIN_ERROR,getTextByRegexAndLanguage(TextKeys.BAD_LOGIN,language));
+        }
+        if(!isPasswordCorrect){
+            request.setAttribute(Parameters.PASSWORD_ERROR,getTextByRegexAndLanguage(TextKeys.BAD_PASSWORD,language));
         }
     }
 

@@ -15,7 +15,7 @@
 <fmt:setBundle basename="text" />
 <html  lang="${language}">
 <head>
-    <title> Index </title>
+    <title> <fmt:message key="registration.page"/>Index </title>
 </head>
 <body>
 <form action="registration.jsp">
@@ -32,29 +32,35 @@
     <input type="hidden" name="page" value="registration.jsp">
     
 
-    <p>First name </p>
+    <p><fmt:message key="registration.first.name"/> </p>
     <c:if test="${not empty requestScope.firstNameError}">
         <p><c:out value="${requestScope.firstNameError}"/> Error output</p>
     </c:if>
     <p><input type="text" name="firstName" value="${param.firstName}" size="30%"/></p>
 
-    <p>Last name</p>
+    <p><fmt:message key="registration.last.name"/></p>
     <c:if test="${not empty requestScope.lastNameError}">
         <p><c:out value="${requestScope.lastNameError}"/> Error output</p>
     </c:if>
     <p><input type="text" name="lastName" value="${param.lastName}"size="30%"/></p>
     
-    <p>Middle Name</p>
+    <p><fmt:message key="registration.middle.name"/></p>
     <c:if test="${not empty requestScope.middleNameError}">
         <p><c:out value="${requestScope.middleNameError}"/> Error output</p>
     </c:if>
     <p><input type="text" name="middleName" value="${param.middleName}" size="30%"/></p>
     
-    <p>Login </p>
+    <p><fmt:message key="registration.login"/> </p>
     <c:if test="${not empty requestScope.loginError}">
         <p><c:out value="${requestScope.loginError}"/> Error output</p>
     </c:if>
     <p><input type="text" name="login" value="${param.login}" size="30%"/></p>
+
+    <p><fmt:message key="registration.password"/> </p>
+    <c:if test="${not empty requestScope.passwordError}">
+        <p><c:out value="${requestScope.passwordError}"/> Error output</p>
+    </c:if>
+    <p><input type="text" name="password" value="${param.password}" size="30%"/></p>
 
     <p><input type="submit" value="Register"/></p>
 </form>

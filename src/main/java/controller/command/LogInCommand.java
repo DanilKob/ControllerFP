@@ -49,8 +49,10 @@ public class LogInCommand implements Command {
         try {
             // todo return object User. not just role
             User.ROLE role = guestService.login(new User(login,password));
+
             RolesUtility.addLoginInServletContext(request,login);
             RolesUtility.addRoleAndLoginInSession(request,role,login);
+
             // todo if statement has not already accepted, catch exception
             return CommandConstants.REDIRECT+ getHomePageByRole(role);
         } catch (LoginException e) {
